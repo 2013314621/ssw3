@@ -10,6 +10,8 @@ make 32 bit
 ```
 # Link
 ---
-[Redis] (https://reis.io)
-**---**
+
+[Redis](https://reis.io)
+
+---
 
