@@ -10,3 +10,5 @@ resource.o: resource.cpp
 	g++ -std=c++11 -c resource.cpp
 space.o: space.cpp
 	g++ -std=c++11 -c space.cpp
+clean :
+	rm program main.o member.o resource.o library.o space.o

@@ -12,6 +12,7 @@ studyroom::studyroom(){
 }
 seat::seat(){
 	floor = 0;
+	empty_time = 0;
 }
 int space::time_get(){
 	return time;
@@ -21,11 +22,11 @@ void space::time_set(string s, int i){
 	int min;
 	string hr_s;
 	string min_s;
-	hr_s = s[11];
+	hr_s = s[0];
 	hr = stoi(hr_s);
-	min_s = s[12];
+	min_s = s[1];
 	min = stoi(min_s);
-	time = hr + min + i;
+	time = hr*10 + min + i;
 }
 
 string space::name_get(){
@@ -53,5 +54,11 @@ int seat::floor_get(){
 }
 void seat::floor_set(int i){
 	floor = i;
+}
+int seat::empty_time_get(){
+	return empty_time;
+}
+void seat::empty_time_set(int i){
+	empty_time = i + 1;
 }
 

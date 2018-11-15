@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <fstream>
 #include <vector>
 #include "library.h"
@@ -61,7 +62,7 @@ void library::data_get(){
 	while(in_1 >> temp){
 		in_1 >> temp;
 		book book_temp(temp);
-		b_list.push_back(book_temp);	
+		book_list.push_back(book_temp);	
 	}
 	in_1.close();
 	
@@ -88,7 +89,11 @@ void library::input_get(){
 	int all_day_s;
 	int flag_r;
 	int flag_s;
+	int date_s_int;
+	int temp_date_int;
+	int clear_flag = 0;
 	string temp;
+	string temp_date;
 	input_resource.open("input.dat");
 	input_space.open("space.dat");
 	for(int i = 0;i < 6;i++){
@@ -98,14 +103,35 @@ void library::input_get(){
 		input_space >> temp;
 	}
 	while(1){
-			flag_r = 0;
-			flag_s = 0;
+		flag_r = 0;
+		flag_s = 0;
 		if(input_resource >> date_r){
 			input_resource >> resource_t_r >> resource_n_r >> op_r >> mem_t_r >> mem_n_r;
 			flag_r = 1;
 		}
 		if(input_space >> date_s){
+			if(clear_flag == 1){
+				date_s_int = daytoint_s(date_s);
+				temp_date_int = daytoint_s(temp_date);
+				if(date_s_int != temp_date_int){
+					seat_list.clear();
+					studyroom_list.clear();
+					for(int i = 0;i < 10;i++){
+						studyroom temp;
+						temp.room_num_set(i+1);
+						studyroom_list.push_back(temp);
+					}
+					for(int i = 0;i < 3;i++){
+						for(int j = 0;j < 50;j++){
+							seat temp;
+							temp.floor_set(i+1);
+							seat_list.push_back(temp);
+						}
+					}
+				}
+			}
 			input_space >> space_t_s >> space_n_s >> op_s >> mem_t_s >> mem_n_s;
+			clear_flag = 1;
 			if(op_s == "B"){
 				input_space >> num_mem_s >> time_s;
 			}
@@ -116,33 +142,28 @@ void library::input_get(){
 			all_day_r = daytoint_r(date_r);
 			all_day_s = daytoint_s(date_s);
 			if(all_day_r > all_day_s){
-				cout << "space faster" << endl;
-				//process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s);
+				cout << process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s) << "return" << endl;
+				temp_date = date_s;
 				//process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r);
 			}
 			else{
-				cout << "resource faster" << endl;
 				//process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r);
 				//process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s);
 			}
 		}
 		else if((flag_r == 1) && (flag_s == 0)){
 			//process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r);
-			cout << "resource" << endl;
 		}
 		else if((flag_r == 0) && (flag_s == 1)){
-			cout << "space" << endl;
+			cout << process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s) << endl;
 			//process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s);
 		}
 		else break;
 	}
 }
-void library::process_r(string date_r, string resource_t_r, string resource_n_r, string op_r, string mem_t_r, string mem_n_r){
-	for(auto a:)
-}
-void library::process_s(string date_s, string space_t_s, string space_n_s, string op_s, string mem_t_s, string mem_n_s, string num_mem_s, string time_s){
+int library::process_s(string date_s, string space_t_s, string space_n_s, string op_s, string mem_t_s, string mem_n_s, string num_mem_s, string time_s){
 	int now_hr_int;
-	string now_hr
+	string now_hr;
 	int flag = 0;
 	int return_time[150];
 	if(space_t_s == "StudyRoom"){
@@ -171,7 +192,9 @@ void library::process_s(string date_s, string space_t_s, string space_n_s, strin
 	if(op_s != "B"){
 		if(space_t_s == "StudyRoom"){
 			for(auto a: studyroom_list){
+				
 				if(a.room_num_get() == stoi(space_n_s)){
+		
 					if(a.name_get() != mem_n_s){
 						return 10;
 					}
@@ -180,7 +203,7 @@ void library::process_s(string date_s, string space_t_s, string space_n_s, strin
 		}
 		else if(space_t_s == "Seat"){
 			for(auto a: seat_list){
-				if(a.floor_get() == space_n_s){
+				if(a.floor_get() == stoi(space_n_s)){
 					if(a.name_get() != mem_n_s) return 10;
 				}
 			}
@@ -194,18 +217,23 @@ void library::process_s(string date_s, string space_t_s, string space_n_s, strin
 				if(stoi(time_s) > 3) return 13;
 				if(a.room_num_get() == stoi(space_n_s)){
 					if(a.condition_get() != 0){
-						return 14 + stoi(a.time_get());
+						if(a.time_get() > 18){
+							return 14 + 18;
+						}
+						else{
+							return 14 + a.time_get();
+						}
 					}
 				}
 			}
 		}
 		else if(space_t_s == "Seat"){
-			i = 0;
+			int i = 0;
 			for(auto a: seat_list){
 				if(a.name_get() == mem_n_s) return 11;
 				if(stoi(num_mem_s) > 1) return 12;
 				if(stoi(time_s) > 3) return 13;
-				if(a.floor_get() == space_n_s){
+				if(a.floor_get() == stoi(space_n_s)){
 					if(a.condition_get() == 0) flag = 1;
 					else{
 						return_time[i] = a.time_get();
@@ -237,6 +265,7 @@ void library::process_s(string date_s, string space_t_s, string space_n_s, strin
 					now_hr = date_s[11];
 					now_hr = now_hr + date_s[12];
 					a.time_set(now_hr, stoi(time_s));
+					cout << "time: " << a.time_get() << endl;
 					if(a.time_get() > 18) a.time_set("18", 0);
 					a.name_set(mem_n_s);
 					a.condition_set(2);
@@ -267,8 +296,91 @@ void library::process_s(string date_s, string space_t_s, string space_n_s, strin
 				count++;
 			}
 		}
+		return 0;
 	}
 	if(op_s == "R"){
-		
+		if(space_t_s == "StudyRoom"){
+			int count = 0;
+			for(auto a: studyroom_list){
+				if(a.room_num_get() == stoi(space_n_s)){
+					a.time_set("0",0);
+					a.name_set("");
+					a.condition_set(0);
+					studyroom_list.push_back(a);
+					studyroom_list.erase(studyroom_list.begin()+count);
+				}
+				count++;
+			}
+		}
+		else if(space_t_s == "Seat"){
+			int count = 0;
+			for(auto a: seat_list){
+				if(a.floor_get() == stoi(space_n_s)){
+					a.time_set("0",0);
+					a.name_set("");
+					a.condition_set(0);
+					seat_list.push_back(a);
+					seat_list.erase(seat_list.begin()+count);
+				}
+				count++;
+			}
+		}
+		return 0;
+	}
+	if(op_s == "E"){
+		int count = 0;
+		if(space_t_s == "StudyRoom"){
+			for(auto a: studyroom_list){
+				if(a.room_num_get() == stoi(space_n_s)){
+					now_hr = date_s[11];
+					now_hr = now_hr + date_s[12];
+					a.condition_set(1);
+					studyroom_list.push_back(a);
+					studyroom_list.erase(studyroom_list.begin()+count);
+				}
+				count++;
+			}
+		}
+		else if(space_t_s == "Seat"){
+			int count = 0;
+			for(auto a: seat_list){
+				if(a.floor_get() == stoi(space_n_s)){
+					now_hr = date_s[11];
+					now_hr = now_hr + date_s[12];
+					a.empty_time_set(stoi(now_hr));
+					a.condition_set(1);
+					seat_list.push_back(a);
+					seat_list.erase(seat_list.begin()+count);
+				}
+				count++;
+			}
+		}
+		return 0;
+	}
+	if(op_s == "C"){
+		if(space_t_s == "StudyRoom"){
+			int count = 0;
+			for(auto a: studyroom_list){
+				if(a.room_num_get() == stoi(space_n_s)){
+					a.condition_set(2);
+					studyroom_list.push_back(a);
+					studyroom_list.erase(studyroom_list.begin()+count);
+				}
+				count++;
+			}
+		}
+		else if(space_t_s == "Seat"){
+			int count = 0;
+			for(auto a: seat_list){
+				if(a.floor_get() == stoi(space_n_s)){
+					a.empty_time_set(0);
+					a.condition_set(2);
+					seat_list.push_back(a);
+					seat_list.erase(seat_list.begin()+count);
+				}
+				count++;
+			}
+		}
+		return 0;
 	}
 }

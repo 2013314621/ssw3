@@ -28,8 +28,11 @@ class studyroom: public space{
 class seat: public space{
 	private:
 		int floor;
+		int empty_time;
 	public:
 		int floor_get();
 		void floor_set(int i);
+		int empty_time_get();
+		void empty_time_set(int i);
 		seat();
 };
