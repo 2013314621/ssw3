@@ -12,6 +12,7 @@ void member :: name_set(string s){
 undergraduated :: undergraduated(){
 	book_name = "";
 	num_borrow = 0;
+	ban = 0;
 	restricted_day = "";
 }
 undergraduated :: undergraduated(string s){

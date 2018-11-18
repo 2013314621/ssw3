@@ -8,11 +8,14 @@ using namespace std;
 string resource :: name_get(){
 	return name;
 }
-void resource :: store(string s){
-	string day_return = s;
-}
 void resource :: name_set(string s){
 	name = s;
+}
+int resource :: condition_get(){
+	return condition;
+}
+void resource :: condition_set(int i){
+	condition = i;
 }
 void book :: return_day_set(string s){
 	string year, month, day;
@@ -43,6 +46,12 @@ string book :: borrow_member_get(){
 }
 void book :: borrow_member_set(string s){
 	member_borrow = s;
+}
+string book :: borrow_day_get(){
+	return day_borrow;
+}
+void book :: borrow_day_set(string s){
+	day_borrow = s;
 }
 book :: book(string s){
 	name_set(s);

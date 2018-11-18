@@ -13,19 +13,15 @@ class member{
 
 class undergraduated: public member{
 	private:
-		string now_status;
 		string book_name;
 		int ban;
-		int now_state;
 		int num_borrow;
 		string restricted_day;
 	public:
 		undergraduated();
 		undergraduated(string s);
-		string status(string s);
 		int ban_get();
 		void ban_set(int i);
-		int state(int i);
 		int limit_get();
 		void limit_set(int i);
 		string restricted_day_get();

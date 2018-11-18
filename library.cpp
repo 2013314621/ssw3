@@ -18,6 +18,7 @@ library::library(){
 			seat_list.push_back(temp);
 		}
 	}
+	data_get();
 	input_get();
 }
 int library :: daytoint_r(string s){
@@ -34,6 +35,16 @@ int library :: daytoint_r(string s){
 	day_int = stoi(day);
 	all_day = year_int*360 + month_int*30 + day_int;
 	return all_day;
+}
+string library :: inttoday_r(int i){
+	string year, month, day;
+	year = to_string(i/360);
+	if(year.length()==1) year = "0" + year;
+	month = to_string((i%360)/30);
+	if(month.length()==1) month = "0" + month;
+	day = to_string((i%360)%30);
+	if(day.length()==1) day = "0" + day;
+	return year + "/" + month + "/" + day;	
 }
 int library :: daytoint_s(string s){
 	string year, month, day, hr;
@@ -87,8 +98,8 @@ void library::input_get(){
 	int count = 1;
 	int all_day_r;
 	int all_day_s;
-	int flag_r;
-	int flag_s;
+	int flag_r = 0;
+	int flag_s = 0;
 	int date_s_int;
 	int temp_date_int;
 	int clear_flag = 0;
@@ -103,62 +114,150 @@ void library::input_get(){
 		input_space >> temp;
 	}
 	while(1){
-		flag_r = 0;
-		flag_s = 0;
-		if(input_resource >> date_r){
-			input_resource >> resource_t_r >> resource_n_r >> op_r >> mem_t_r >> mem_n_r;
-			flag_r = 1;
+		if(flag_r == 0){
+			if(input_resource >> date_r){
+				input_resource >> resource_t_r >> resource_n_r >> op_r >> mem_t_r >> mem_n_r;
+				flag_r = 1;
+			}
 		}
-		if(input_space >> date_s){
-			if(clear_flag == 1){
-				date_s_int = daytoint_s(date_s);
-				temp_date_int = daytoint_s(temp_date);
-				if(date_s_int != temp_date_int){
-					seat_list.clear();
-					studyroom_list.clear();
-					for(int i = 0;i < 10;i++){
-						studyroom temp;
-						temp.room_num_set(i+1);
-						studyroom_list.push_back(temp);
-					}
-					for(int i = 0;i < 3;i++){
-						for(int j = 0;j < 50;j++){
-							seat temp;
-							temp.floor_set(i+1);
-							seat_list.push_back(temp);
+		if(flag_s == 0){
+			if(input_space >> date_s){
+				if(clear_flag == 1){
+					date_s_int = daytoint_s(date_s);
+					temp_date_int = daytoint_s(temp_date);
+					if(date_s_int != temp_date_int){
+						seat_list.clear();
+						studyroom_list.clear();
+						for(int i = 0;i < 10;i++){
+							studyroom temp;
+							temp.room_num_set(i+1);
+							studyroom_list.push_back(temp);
+						}
+						for(int i = 0;i < 3;i++){
+							for(int j = 0;j < 50;j++){
+								seat temp;
+								temp.floor_set(i+1);
+								seat_list.push_back(temp);
+							}
 						}
 					}
 				}
+				input_space >> space_t_s >> space_n_s >> op_s >> mem_t_s >> mem_n_s;
+				clear_flag = 1;
+				if(op_s == "B"){
+					input_space >> num_mem_s >> time_s;
+				}
+				flag_s = 1;
 			}
-			input_space >> space_t_s >> space_n_s >> op_s >> mem_t_s >> mem_n_s;
-			clear_flag = 1;
-			if(op_s == "B"){
-				input_space >> num_mem_s >> time_s;
-			}
-			flag_s = 1;
 		}
 		if((flag_r == 1) && (flag_s == 1))
 		{
 			all_day_r = daytoint_r(date_r);
 			all_day_s = daytoint_s(date_s);
+
 			if(all_day_r > all_day_s){
-				cout << process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s) << "return" << endl;
+				output(process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s));
 				temp_date = date_s;
-				//process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r);
+				flag_s = 0;
 			}
 			else{
-				//process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r);
-				//process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s);
+				output(process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r));
+				flag_r = 0;
 			}
 		}
 		else if((flag_r == 1) && (flag_s == 0)){
-			//process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r);
+			output(process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r));
+			flag_r = 0;
 		}
 		else if((flag_r == 0) && (flag_s == 1)){
-			cout << process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s) << endl;
-			//process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s);
+			output(process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s));
+			temp_date = date_s;
+			flag_s = 0;
 		}
 		else break;
+	}
+}
+int library::process_r(string date_r, string resource_t_r, string resource_n_r, string op_r, string mem_t_r, string mem_n_r){
+	int flag = 0;
+	int state = 0;
+	int i = 0;
+	int int_temp;
+	int temp_day_int;
+	string delay;
+	for(auto a : book_list){
+		if(a.name_get() == resource_n_r){
+			flag = 1;
+		}
+	}
+	if(flag == 0){
+		return 1;
+	}
+	else{
+		if(op_r == "B"){
+			for(auto a : mem_list){
+				if(a.name_get() == mem_n_r){
+					if(a.limit_get() != 0){ 
+						return 2;	
+					}
+					if(a.ban_get() == 1){
+						return 600 + daytoint_r(a.restricted_day_get());
+					}
+				}
+			}
+			for(auto a : book_list){
+				if(a.name_get() == resource_n_r){
+					if(a.condition_get() == 0){
+						if(a.borrow_member_get() == mem_n_r) return 4 + daytoint_r(a.borrow_day_get());
+						else{
+							return 50 + daytoint_r(a.return_day_get());
+						}
+					}
+				}
+			}
+		}
+		else if(op_r == "R"){
+			for(auto a : book_list){
+				if(a.name_get() == resource_n_r){
+					if(a.borrow_member_get() == mem_n_r){
+						if(daytoint_r(a.return_day_get()) > daytoint_r(date_r)){
+							temp_day_int = daytoint_r(a.return_day_get()) - daytoint_r(date_r);
+							int count = 0;
+							for(auto a: mem_list){
+								if(a.name_get() == mem_n_r){
+									a.book_name_set("");
+									a.limit_set(0);
+									a.ban_set(1);
+									a.restricted_day_set(inttoday_r(temp_day_int + daytoint_r(date_r)));
+									mem_list.push_back(a);
+									mem_list.erase(mem_list.begin() +count);
+								}
+								count++;
+							}
+							return 7000 + temp_day_int + daytoint_r(date_r);
+						}
+					}
+				}
+			}
+		}
+		if(op_r == "B"){
+			int count = 0;
+			for(auto a:book_list){
+				if(a.name_get() == resource_n_r){
+					a.condition_set(0);
+					a.borrow_member_set(mem_n_r);
+					a.borrow_day_set(date_r);
+					a.return_day_set(date_r);
+					book_list.push_back(a);
+					book_list.erase(book_list.begin()+count);
+				}
+				count++;	
+			}
+			undergraduated b(mem_n_r);
+			b.book_name_set(resource_n_r);
+			b.limit_set(1);
+			mem_list.push_back(b);
+		}
+		return 0;
 	}
 }
 int library::process_s(string date_s, string space_t_s, string space_n_s, string op_s, string mem_t_s, string mem_n_s, string num_mem_s, string time_s){
@@ -170,6 +269,7 @@ int library::process_s(string date_s, string space_t_s, string space_n_s, string
 		if(stoi(space_n_s) > 10) return 8;
 	}
 	else if(space_t_s == "Seat"){
+	
 		if(stoi(space_n_s) > 3) return 8;
 	}
 	if(space_t_s == "StudyRoom"){
@@ -265,7 +365,7 @@ int library::process_s(string date_s, string space_t_s, string space_n_s, string
 					now_hr = date_s[11];
 					now_hr = now_hr + date_s[12];
 					a.time_set(now_hr, stoi(time_s));
-					cout << "time: " << a.time_get() << endl;
+			
 					if(a.time_get() > 18) a.time_set("18", 0);
 					a.name_set(mem_n_s);
 					a.condition_set(2);
@@ -383,4 +483,22 @@ int library::process_s(string date_s, string space_t_s, string space_n_s, string
 		}
 		return 0;
 	}
+}
+void library::output(int i){
+	if(i == 0) cout << "Success." << endl;
+	else if(i == 1) cout << "Non exist resource." << endl;
+	else if(i == 2) cout << "Exceeds your possible number of borrow. Possible # of borrows: 1" << endl;
+	else if(i == 3) cout << "You did not borrow this book." << endl;
+	else if(i == 4) cout << "" << endl;
+	else if((i >= 50) && (i <90)) cout << "Other member already borrowed this book. This book will be returned at " << inttoday_r(i - 50) << "." << endl;
+	else if((i >= 600) &&(i <= 700)) cout << "Restricted member until " << inttoday_r(i - 600) << "." << endl;
+	else if(i >= 7000) cout << "Delayed return. You'll be restricted until " << inttoday_r(i-7000) <<"." << endl;
+	else if(i == 8) cout << "Invalid space id." << endl;
+	else if(i == 91) cout << "This space is not available now. Available from 09 to 18." << endl;
+	else if(i == 92) cout << "This space is not available now. Available from 09 to 21." << endl;
+	else if(i == 10) cout << "You did not borrow this space." << endl;
+	else if(i == 11) cout << "You already borrowed this kind of space." << endl;
+	else if(i == 12) cout << "Exceed available number." << endl;
+	else if(i == 13) cout << "Exceed available time." << endl;
+	else if(i >= 14) cout << "There is no remain space. This space is available after " << i-14 << "." << endl;
 }

@@ -5,10 +5,11 @@ using namespace std;
 class resource{
 	private:
 		string name;
+		int condition;
 	public:
 		string name_get();
-		
-		void store(string s);
+		int condition_get();
+		void condition_set(int i);
 		void name_set(string s);
 };
 
@@ -17,13 +18,12 @@ class book: public resource{
 		string day_return;
 		string day_borrow;
 		string member_borrow;
-		int avail;
 	public:
 		book(string member);
 		string borrow_member_get();
 		void borrow_member_set(string s);
-		string borrow_day(string day_borrow);
+		string borrow_day_get();
+		void borrow_day_set(string s);
 		void return_day_set(string day_borrow);
 		string return_day_get();
-		int available(string member);
 };
