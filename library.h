@@ -8,6 +8,8 @@ using namespace std;
 class library{
 	private:
 		vector <book> book_list;
+		vector <magazine> mag_list;
+		vector <e_book> e_book_list;
 		vector <undergraduated> mem_list;
 		vector <seat> seat_list;
 		vector <studyroom> studyroom_list;

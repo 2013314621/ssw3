@@ -246,6 +246,16 @@ int library::process_r(string date_r, string resource_t_r, string resource_n_r, 
 			flag = 1;
 		}
 	}
+	for(auto a : mag_list){
+		if(a.name_get() == resource_n_r){
+			flag = 1;
+		}
+	}
+	for(auto a : e_book_list){
+		if(a.name_get() == resource_n_r){
+			flag = 1;
+		}
+	}
 	if(flag == 0){
 		return 1;
 	}
@@ -261,6 +271,27 @@ int library::process_r(string date_r, string resource_t_r, string resource_n_r, 
 					}
 				}
 			}
+			for(auto a : grad_list){
+				if(a.name_get() == mem_n_r){
+					if(a.limit_get() != 0){ 
+						return 2;	
+					}
+					if(a.ban_get() == 1){
+						return 600 + daytoint_r(a.restricted_day_get());
+					}
+				}
+			}
+			for(auto a : mem_list){
+				if(a.name_get() == mem_n_r){
+					if(a.limit_get() != 0){ 
+						return 2;	
+					}
+					if(a.ban_get() == 1){
+						return 600 + daytoint_r(a.restricted_day_get());
+					}
+				}
+			}
+	
 			for(auto a : book_list){
 				if(a.name_get() == resource_n_r){
 					if(a.condition_get() == 0){

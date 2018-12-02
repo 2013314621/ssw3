@@ -29,3 +29,41 @@ class undergraduated: public member{
 		void book_name_set(string s);
 		string book_name_get();
 };
+
+class graduated: public member{
+	private:
+		string book_name;
+		int ban;
+		int num_borrow;
+		string restricted_day;
+	public:
+		graduated();
+		graduated(string s);
+		int ban_get();
+		void ban_set(int i);
+		int limit_get();
+		void limit_set(int i);
+		string restricted_day_get();
+		void restricted_day_set(string s);
+		void book_name_set(string s);
+		string book_name_get();
+};
+
+class faculties: public member{
+	private:
+		string book_name;
+		int ban;
+		int num_borrow;
+		string restricted_day;
+	public:
+		faculties();
+		faculties(string s);
+		int ban_get();
+		void ban_set(int i);
+		int limit_get();
+		void limit_set(int i);
+		string restricted_day_get();
+		void restricted_day_set(string s);
+		void book_name_set(string s);
+		string book_name_get();
+};
