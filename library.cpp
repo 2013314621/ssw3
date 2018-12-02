@@ -78,6 +78,19 @@ void library::data_get(){
 	in_1.close();
 	
 }
+int library::find_num(string s){
+	if(s.find('1') != -1) return 1;
+	else if(s.find('2') != -1) return 1;
+	else if(s.find('3') != -1) return 1;
+	else if(s.find('4') != -1) return 1;
+	else if(s.find('5') != -1) return 1;
+	else if(s.find('6') != -1) return 1;
+	else if(s.find('7') != -1) return 1;
+	else if(s.find('8') != -1) return 1;
+	else if(s.find('9') != -1) return 1;
+	else if(s.find('0') != -1) return 1;
+	else return 0;
+}
 void library::input_get(){
 	ifstream input_space;
 	ifstream input_resource;
@@ -156,21 +169,65 @@ void library::input_get(){
 			all_day_s = daytoint_s(date_s);
 
 			if(all_day_r > all_day_s){
-				output(process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s));
+				try{
+					if(daytoint_s(date_s) < daytoint_s("2009/12/30/00")) throw -1;
+					else if((space_t_s != "StudyRoom") && (space_t_s != "Seat")) throw -2;
+					else if((op_s != "R") && (op_s != "B")) throw -3;
+					else if((mem_t_s != "Undergraduate") && (mem_t_s != "Faculty") && (mem_t_s != "Graduate")) throw -4;
+					else if(find_num(mem_n_s) == 1) throw -5;
+					else if(stoi(time_s) < 0) throw -6;
+					else output_s(process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s));
+				}
+				catch(int i){
+					char tmp;
+					while(true){
+						input_space.get(tmp);
+						if(tmp == '\n') break;
+					}
+					if(i == -1) cout << "Date out of range" << endl;
+					else if(i == -2) cout << "Non-exist space type" << endl;
+					else if(i == -3) cout << "Non-exist operation" << endl;
+					else if(i == -4) cout << "Non-exist member type" << endl;
+					else if(i == -5) cout << "Member name with numbers" << endl;
+					else if(i == -6) cout << "Negative time" << endl;
+				}
+				
 				temp_date = date_s;
 				flag_s = 0;
 			}
 			else{
-				output(process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r));
+				output_r(process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r));
 				flag_r = 0;
 			}
 		}
 		else if((flag_r == 1) && (flag_s == 0)){
-			output(process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r));
+			output_r(process_r(date_r,resource_t_r,resource_n_r,op_r,mem_t_r,mem_n_r));
 			flag_r = 0;
 		}
 		else if((flag_r == 0) && (flag_s == 1)){
-			output(process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s));
+				try{
+					if(daytoint_s(date_s) < daytoint_s("2009/12/30/00")) throw -1;
+					else if((space_t_s != "StudyRoom") && (space_t_s != "Seat")) throw -2;
+					else if((op_s != "R") && (op_s != "B")) throw -3;
+					else if((mem_t_s != "Undergraduate") && (mem_t_s != "Faculty") && (mem_t_s != "Graduate")) throw -4;
+					else if(find_num(mem_n_s) == 1) throw -5;
+					else if(stoi(time_s) < 0) throw -6;
+					else output_s(process_s(date_s,space_t_s,space_n_s,op_s,mem_t_s,mem_n_s,num_mem_s,time_s));
+				}
+				catch(int i){
+					char tmp;
+					while(true){
+						input_space.get(tmp);
+						if(tmp == '\n') break;
+					}
+					if(i == -1) cout << "Date out of range" << endl;
+					else if(i == -2) cout << "Non-exist space type" << endl;
+					else if(i == -3) cout << "Non-exist operation" << endl;
+					else if(i == -4) cout << "Non-exist member type" << endl;
+					else if(i == -5) cout << "Member name with numbers" << endl;
+					else if(i == -6) cout << "Negative time" << endl;				
+				}
+			
 			temp_date = date_s;
 			flag_s = 0;
 		}
@@ -265,6 +322,7 @@ int library::process_s(string date_s, string space_t_s, string space_n_s, string
 	string now_hr;
 	int flag = 0;
 	int return_time[150];
+
 	if(space_t_s == "StudyRoom"){
 		if(stoi(space_n_s) > 10) return 8;
 	}
@@ -484,15 +542,8 @@ int library::process_s(string date_s, string space_t_s, string space_n_s, string
 		return 0;
 	}
 }
-void library::output(int i){
+void library::output_s(int i){
 	if(i == 0) cout << "Success." << endl;
-	else if(i == 1) cout << "Non exist resource." << endl;
-	else if(i == 2) cout << "Exceeds your possible number of borrow. Possible # of borrows: 1" << endl;
-	else if(i == 3) cout << "You did not borrow this book." << endl;
-	else if(i == 4) cout << "" << endl;
-	else if((i >= 50) && (i <90)) cout << "Other member already borrowed this book. This book will be returned at " << inttoday_r(i - 50) << "." << endl;
-	else if((i >= 600) &&(i <= 700)) cout << "Restricted member until " << inttoday_r(i - 600) << "." << endl;
-	else if(i >= 7000) cout << "Delayed return. You'll be restricted until " << inttoday_r(i-7000) <<"." << endl;
 	else if(i == 8) cout << "Invalid space id." << endl;
 	else if(i == 91) cout << "This space is not available now. Available from 09 to 18." << endl;
 	else if(i == 92) cout << "This space is not available now. Available from 09 to 21." << endl;
@@ -501,4 +552,14 @@ void library::output(int i){
 	else if(i == 12) cout << "Exceed available number." << endl;
 	else if(i == 13) cout << "Exceed available time." << endl;
 	else if(i >= 14) cout << "There is no remain space. This space is available after " << i-14 << "." << endl;
+}
+void library::output_r(int i){
+	if(i == 0) cout << "Success." << endl;
+	else if(i == 1) cout << "Non exist resource." << endl;
+	else if(i == 2) cout << "Exceeds your possible number of borrow. Possible # of borrows: 1" << endl;
+	else if(i == 3) cout << "You did not borrow this book." << endl;
+	else if(i == 4) cout << "" << endl;
+	else if((i >= 50) && (i <90)) cout << "Other member already borrowed this book. This book will be returned at " << inttoday_r(i - 50) << "." << endl;
+	else if((i >= 600) &&(i <= 700)) cout << "Restricted member until " << inttoday_r(i - 600) << "." << endl;
+	else if(i >= 7000) cout << "Delayed return. You'll be restricted until " << inttoday_r(i-7000) <<"." << endl;
 }
